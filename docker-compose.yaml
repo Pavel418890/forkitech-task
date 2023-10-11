@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    networks:
+      - backend
+    ports:
+      - 6379:6379
+  backend1:
+    build:
+      context: .
+      args:
+        BACKEND_PORT: ${BACKEND_PORT-8000}
+    container_name: b1
+    depends_on:
+      - redis
+    networks:
+      - backend
+    restart: on-failure
+    ports:
+      - 8000:8000
+  backend2:
+    build:
+      context: .
+      args:
+        BACKEND_PORT: ${BACKEND_PORT-8001}
+    container_name: b2
+    depends_on:
+      - redis
+    networks:
+      - backend
+    restart: on-failure
+    ports:
+      - 8001:8001
+
+networks:
+  backend:
+    driver: bridge
+
